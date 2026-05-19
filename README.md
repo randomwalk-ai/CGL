@@ -1,6 +1,8 @@
 # Life Lab - Conway's Game of Life
 
-![Life Lab Demo](lib/assets/gif_readme.gif)
+<p align="center">
+  <img src="lib/assets/gif_readme.gif" alt="Life Lab Demo" width="600" />
+</p>
 
 **Life Lab** is a premium, highly interactive implementation of Conway's Game of Life built with Flutter. It combines the fascinating mathematical beauty of cellular automata with a modern, glassmorphic design and a robust professional test suite.
 
@@ -10,10 +12,11 @@
 - **Dynamic Rule System**: Don't just play by the standard rules. Use the "Rule Lab" to adjust the neighbors required for birth and survival to discover entirely new universes.
 - **Educational Suite**: 
   - **Learn Screen**: Explore the history and mechanics of the game through a detailed FAQ and guide.
-  - **Interactive Tutorial**: A step-by-step onboarding experience to get you started.
-- **Win/Loss Mechanics**: The game detects when your colony has stabilized, entered an endless loop, or completely vanished, providing a sense of achievement and feedback.
-- **Premium Aesthetics**: Designed with a sleek dark theme, neon green accents, and smooth micro-animations.
-- **Optimized Performance**: Uses background isolates for heavy simulation calculations on the Welcome Screen to ensure a buttery-smooth 60fps experience.
+  - **Story Tutorial**: A guided, narrative onboarding experience for first-time users.
+  - **Interactive Tutorial**: A step-by-step help guide to master the simulation controls.
+- **Advanced State Detection**: The game detects when your colony has stabilized (Won), entered an endless loop (Oscillating), or completely vanished (Extinct).
+- **Premium Aesthetics**: Designed with a sleek dark theme, neon green accents, smooth micro-animations, and glassmorphic UI elements.
+- **Optimized Performance**: High-performance grid rendering optimized for 60fps, even during complex simulations.
 
 ## 🚀 Getting Started
 
@@ -28,24 +31,24 @@
 
 ## 🧪 Testing
 
-Life Lab comes with a professional-grade test suite consisting of **28 deterministic tests** covering Unit, Integration, System, and Regression testing.
+Life Lab comes with a professional-grade, 100% deterministic test suite consisting of **147 tests** covering Unit, Integration, System, and Regression testing.
 
 To run the full suite:
 ```bash
 flutter test test/all_tests.dart
 ```
 
-This suite validates:
-- **Core Engine**: Birth, survival, and neighbor counting logic.
-- **UI & Navigation**: Tab switching, slider updates, and tutorial flows.
+### Coverage Highlights:
+- **Core Engine**: Mathematical verification of birth, survival, and neighbor counting.
+- **UI & Navigation**: Tab switching, slider updates, and complex navigation flows.
 - **End-to-End Simulation**: Accurate detection of stable states, endless loops, and total extinction.
-- **Performance & Cleanup**: Proper timer and animation controller disposal.
+- **Regression Guarding**: Verification of theme constants, double-tap guards, and proper timer/controller disposal to prevent memory leaks.
 
 ## 🛠️ Technical Details
 - **UI Framework**: Flutter (Material 3)
-- **State Management**: StatefulWidgets with optimized `setState` for high-performance grid rendering.
-- **Packages**: `tutorial_coach_mark`, `share_plus`, `url_launcher`, `shared_preferences`.
-- **Custom Viewport Logic**: Uses fixed physical size testing strategies to ensure UI consistency across all devices.
+- **State Management**: Optimized `setState` with local grid isolation for high-performance rendering.
+- **Persistence**: `shared_preferences` for tracking user progress and onboarding status.
+- **Testing Strategy**: Coordinate-based grid interaction and fixed-viewport testing for cross-platform consistency.
 
 ---
-Built with ❤️ by Randomwalk.ai
+Built with 💚 by Randomwalk.ai

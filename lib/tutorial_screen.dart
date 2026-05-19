@@ -113,61 +113,68 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Widget _buildSlide({required Widget visual, required String title, required String description}) {
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          visual,
-          const SizedBox(height: 40),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            visual,
+            const SizedBox(height: 40),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: green,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            description,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-              height: 1.5,
+            const SizedBox(height: 20),
+            Text(
+              description,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+                height: 1.5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+
   Widget _buildRuleSummarySlide() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Rules of Life",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Rules of Life",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 30),
-          _ruleRow("SURVIVAL", "2 or 3 live neighbor cells", _survival, Icons.check_circle, green),
-          _ruleRow("BIRTH", "Exactly 3 live neighbor cells", _reproduction, Icons.check_circle, green),
-          _ruleRow("DEATH (Lonely)", "0 or 1 live neighbor cells", _underpopulation, Icons.cancel, Colors.redAccent),
-          _ruleRow("DEATH (Crowded)", "> 3 live neighbor cells", _overpopulation, Icons.cancel, Colors.redAccent),
-        ],
+            const SizedBox(height: 30),
+            _ruleRow("SURVIVAL", "2 or 3 live neighbor cells", _survival, Icons.check_circle, green),
+            _ruleRow("BIRTH", "Exactly 3 live neighbor cells", _reproduction, Icons.check_circle, green),
+            _ruleRow("DEATH (Lonely)", "0 or 1 live neighbor cells", _underpopulation, Icons.cancel, Colors.redAccent),
+            _ruleRow("DEATH (Crowded)", "> 3 live neighbor cells", _overpopulation, Icons.cancel, Colors.redAccent),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _ruleRow(String title, String condition, List<List<int>> frames, IconData icon, Color iconColor) {
     return Container(
@@ -220,32 +227,35 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Widget _buildFinalSlide() {
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.rocket_launch, size: 100, color: green),
-          const SizedBox(height: 40),
-          const Text(
-            "Ready to Evolve?",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.rocket_launch, size: 100, color: green),
+            const SizedBox(height: 40),
+            const Text(
+              "Ready to Evolve?",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "We highly recommend reading the full 'Learn' guide to master the rules before playing!",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
-          ),
-        ],
+            const SizedBox(height: 20),
+            const Text(
+              "We highly recommend reading the full 'Learn' guide to master the rules before playing!",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildDot(int index) {
     bool isActive = _currentPage == index;

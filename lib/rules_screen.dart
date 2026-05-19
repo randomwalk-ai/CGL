@@ -1,3 +1,5 @@
+
+// Force recompile
 import 'package:flutter/material.dart';
 import 'theme.dart';
 
@@ -32,8 +34,8 @@ class RulesScreen extends StatelessWidget {
         const EdgeInsets.all(20),
 
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,6 +51,7 @@ class RulesScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: () {
                   onBirthChanged(3);
@@ -66,75 +69,30 @@ class RulesScreen extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           sliderCard(
-            "👶 Birth Rule",
+            "BIRTH RULE",
             birthRule,
             onBirthChanged,
             "Standard: 3\nA dead cell needs exactly this many neighbors to come to life.",
           ),
 
           sliderCard(
-            "🌱 Survive Min",
+            "SURVIVE (MIN)",
             surviveMin,
             onSurviveMinChanged,
             "Standard: 2\nA living cell needs at least this many neighbors to survive.",
           ),
 
           sliderCard(
-            "🌳 Survive Max",
+            "SURVIVE (MAX)",
             surviveMax,
             onSurviveMaxChanged,
             "Standard: 3\nA living cell needs no more than this many neighbors to survive.",
           ),
 
-          infoCard(
-            "🧪 TRY THIS",
-            "Change the rules and watch life evolve differently.",
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget infoCard(
-      String title,
-      String body) {
-
-    return Container(
-
-      padding:
-      const EdgeInsets.all(18),
-
-      child: Column(
-
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
-
-        children: [
-
-          Text(
-            title,
-            style:
-            const TextStyle(
-              color: green,
-              fontWeight:
-              FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(
-              height: 8),
-
-          Text(
-            body,
-            style:
-            const TextStyle(
-              color:
-              Colors.grey,
-            ),
-          )
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -177,16 +135,14 @@ class RulesScreen extends StatelessWidget {
 
         children: [
 
-          Row(
-
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
-
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-
-              Row(
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(title),
+                  Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   const SizedBox(width: 8),
                   Tooltip(
                     message: tooltipText,
@@ -205,14 +161,10 @@ class RulesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               Text(
-                "$value",
-                style:
-                const TextStyle(
-                  color: green,
-                ),
-              )
+                value.toString(),
+                style: const TextStyle(color: green, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
 
