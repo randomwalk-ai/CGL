@@ -94,11 +94,6 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
     super.dispose();
   }
 
-  void _advanceToStep3() {
-    _tutorialStep = 3;
-    _badgeTimer?.cancel();
-  }
-
   Future<void> _checkPlayTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -131,8 +126,16 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
   void start() {
     timer?.cancel();
 
-    if (_tutorialStep == 1) {
-      setState(() => _tutorialStep = 2);
+    if (_tutorialStep != -1) {
+      if (_tutorialStep == 1) setState(() => _tutorialStep = 2);
+      else if (_tutorialStep == 6) setState(() => _tutorialStep = 7);
+      else if (_tutorialStep == 9) setState(() => _tutorialStep = 10);
+      else if (_tutorialStep == 12) setState(() => _tutorialStep = 13);
+      else if (_tutorialStep == 15) setState(() => _tutorialStep = 16);
+      else if (_tutorialStep == 17) {
+        setState(() => _tutorialStep = -1);
+        SharedPreferences.getInstance().then((p) => p.setBool('playScreenTutorialShown', true));
+      }
     }
 
     setState(() {
@@ -220,13 +223,10 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
       if (isNew) {
         pause();
         setState(() {
+          if (_tutorialStep == 3) _tutorialStep = 4;
           gameEndTitle = "Your pattern failed";
           gameEndMessage = "Started with $_initialCellsCount cells, but all died after $generation generations.";
           isWin = false;
-          if (_tutorialStep == 3) {
-            _tutorialStep = 4;
-            _badgeTimer?.cancel();
-          }
         });
         _triggerOverlay();
       }
@@ -235,8 +235,9 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
       if (isNew) {
         pause();
         setState(() {
-          // High Score Logic: Only update on win condition
-          if (aliveCount > _highScore) {
+          if (_tutorialStep == 3) _tutorialStep = 4;
+          // High Score Logic: Only update on win condition after tutorial is done
+          if (_tutorialStep == -1 && aliveCount > _highScore) {
             _highScore = aliveCount;
             SharedPreferences.getInstance().then((prefs) {
               prefs.setInt('highScore', _highScore);
@@ -245,10 +246,6 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
           gameEndTitle = "Your pattern survived with $aliveCount live cells";
           gameEndMessage = "Started with $_initialCellsCount cells. Stabilized after $generation generations.";
           isWin = true;
-          if (_tutorialStep == 3) {
-            _tutorialStep = 4;
-            _badgeTimer?.cancel();
-          }
         });
         _triggerOverlay();
       }
@@ -258,8 +255,9 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
         if (isNew) {
           // Intentionally NOT pausing here so the loop continues animating!
           setState(() {
-            // High Score Logic: Also update on loop condition
-            if (aliveCount > _highScore) {
+            if (_tutorialStep == 3) _tutorialStep = 4;
+            // High Score Logic: Also update on loop condition after tutorial is done
+            if (_tutorialStep == -1 && aliveCount > _highScore) {
               _highScore = aliveCount;
               SharedPreferences.getInstance().then((prefs) {
                 prefs.setInt('highScore', _highScore);
@@ -268,10 +266,6 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
             gameEndTitle = "Your pattern is looping with $aliveCount live cells";
             gameEndMessage = "Started with $_initialCellsCount cells. Entered a loop after $generation generations.";
             isWin = true;
-            if (_tutorialStep == 3) {
-              _tutorialStep = 4;
-              _badgeTimer?.cancel();
-            }
           });
           _triggerOverlay();
         }
@@ -424,8 +418,12 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
       _hasShownResetText = false;
       _hasShownRestartText = false;
       _resetTextTimer?.cancel();
-      if ((_tutorialStep == 3 || _tutorialStep == 4) && !andResetHighScore) {
-        _tutorialStep = 5;
+      if (!andResetHighScore && _tutorialStep != -1) {
+        if (_tutorialStep == 4) _tutorialStep = 5;
+        else if (_tutorialStep == 7) _tutorialStep = 8;
+        else if (_tutorialStep == 10) _tutorialStep = 11;
+        else if (_tutorialStep == 13) _tutorialStep = 14;
+        else if (_tutorialStep == 16) _tutorialStep = 17;
       }
       generation = 0;
       gameEndTitle = null;
@@ -511,24 +509,23 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
     return count;
   }
 
-  void _checkTutorialStep0() {
+  void _checkTutorialDrawPhase() {
+    int aliveCount = 0;
+    for (int x = 0; x < size; x++) {
+      for (int y = 0; y < size; y++) {
+        if (grid[x][y] == 1) aliveCount++;
+      }
+    }
     if (_tutorialStep == 0) {
-      final targets = [
-        [8, 9], [8, 10], [9, 8], [9, 9], [10, 9]
-      ];
-      bool targetsHit = true;
-      for (var t in targets) {
-        if (grid[t[0]][t[1]] != 1) targetsHit = false;
-      }
-      int aliveCount = 0;
-      for (int x = 0; x < size; x++) {
-        for (int y = 0; y < size; y++) {
-          if (grid[x][y] == 1) aliveCount++;
-        }
-      }
-      if (targetsHit && aliveCount == 5) {
-        _tutorialStep = 1;
-      }
+      if (grid[8][9] == 1 && grid[8][10] == 1 && grid[9][8] == 1 && grid[9][9] == 1 && grid[10][9] == 1 && aliveCount == 5) _tutorialStep = 1;
+    } else if (_tutorialStep == 5) {
+      if (grid[9][9] == 1 && aliveCount == 1) _tutorialStep = 6;
+    } else if (_tutorialStep == 8) {
+      if (grid[9][9] == 1 && grid[9][10] == 1 && grid[10][9] == 1 && grid[10][10] == 1 && aliveCount == 4) _tutorialStep = 9;
+    } else if (_tutorialStep == 11) {
+      if (grid[8][9] == 1 && grid[9][8] == 1 && grid[9][9] == 1 && grid[9][10] == 1 && grid[10][9] == 1 && aliveCount == 5) _tutorialStep = 12;
+    } else if (_tutorialStep == 14) {
+      if (grid[9][9] == 1 && grid[10][9] == 1 && grid[10][10] == 1 && aliveCount == 3) _tutorialStep = 15;
     }
   }
 
@@ -608,8 +605,8 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _tutorialStep == 3 ? green : Colors.transparent, width: 2),
-                          boxShadow: _tutorialStep == 3 ? [BoxShadow(color: green.withOpacity(0.4), blurRadius: 25, spreadRadius: 6)] : [],
+                          border: Border.all(color: Colors.transparent, width: 2),
+                          boxShadow: const [],
                         ),
                         child: Column(
                           children: [
@@ -645,29 +642,26 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                     Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        boxShadow: _tutorialStep == 5 ? [BoxShadow(color: green.withOpacity(0.8), blurRadius: 25, spreadRadius: 6)] : [],
+                                        boxShadow: const [],
                                       ),
                                       child: IconButton(
                                         key: widget.ruleLabBtnKey,
-                                        icon: Icon(Icons.tune, color: isRunning ? Colors.grey : green),
-                                        onPressed: isRunning ? null : () {
-                                          if (_tutorialStep == 5) {
-                                            setState(() => _tutorialStep = -1);
-                                            SharedPreferences.getInstance().then((p) => p.setBool('playScreenTutorialShown', true));
-                                          }
+                                        icon: Icon(Icons.tune, color: (isRunning || _tutorialStep != -1) ? Colors.grey : green),
+                                        onPressed: (isRunning || _tutorialStep != -1) ? null : () {
                                           widget.onRuleLabTap();
                                         },
                                         tooltip: "Experiment with Rules",
                                       ),
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.help_outline, color: isRunning ? Colors.grey : green),
-                                      onPressed: isRunning ? null : widget.onHelpTap,
+                                      icon: Icon(Icons.help_outline, color: (isRunning || _tutorialStep != -1) ? Colors.grey : green),
+                                      onPressed: (isRunning || _tutorialStep != -1) ? null : widget.onHelpTap,
                                       tooltip: "Tutorial",
                                     ),
                                     const SizedBox(width: 8),
                                     GestureDetector(
                                       onTap: () {
+                                        if (_tutorialStep != -1) return;
                                         _genTapCount++;
                                         _genTapTimer?.cancel();
                                         if (_genTapCount >= 5) {
@@ -772,8 +766,8 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                             height: gridSize,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _tutorialStep == 0 ? green : Colors.transparent, width: 2),
-                              boxShadow: _tutorialStep == 0 ? [BoxShadow(color: green.withOpacity(0.4), blurRadius: 30, spreadRadius: 8)] : [],
+                              border: Border.all(color: (_tutorialStep == 0 || _tutorialStep == 5 || _tutorialStep == 8 || _tutorialStep == 11 || _tutorialStep == 14) ? green : Colors.transparent, width: 2),
+                              boxShadow: (_tutorialStep == 0 || _tutorialStep == 5 || _tutorialStep == 8 || _tutorialStep == 11 || _tutorialStep == 14) ? [BoxShadow(color: green.withOpacity(0.4), blurRadius: 30, spreadRadius: 8)] : [],
                             ),
                             child: Stack(
                               alignment: Alignment.center,
@@ -785,13 +779,13 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                     int col = (details.localPosition.dx / cellWidth).floor();
                                     int row = (details.localPosition.dy / cellWidth).floor();
                                     if (row >= 0 && row < size && col >= 0 && col < size) {
-                                      if (_tutorialStep == 0) {
-                                        bool validTarget = (row == 8 && col == 9) ||
-                                          (row == 8 && col == 10) ||
-                                          (row == 9 && col == 8) ||
-                                          (row == 9 && col == 9) ||
-                                          (row == 10 && col == 9);
-                                        if (!validTarget) return;
+                                      if (_tutorialStep != -1 && _tutorialStep != 17) {
+                                        if (_tutorialStep == 0 && !((row == 8 && col == 9) || (row == 8 && col == 10) || (row == 9 && col == 8) || (row == 9 && col == 9) || (row == 10 && col == 9))) return;
+                                        if (_tutorialStep == 5 && (row != 9 || col != 9)) return;
+                                        if (_tutorialStep == 8 && !(row >= 9 && row <= 10 && col >= 9 && col <= 10)) return;
+                                        if (_tutorialStep == 11 && !((row == 8 && col == 9) || (row == 9 && col >= 8 && col <= 10) || (row == 10 && col == 9))) return;
+                                        if (_tutorialStep == 14 && !((row == 9 && col == 9) || (row == 10 && col == 9) || (row == 10 && col == 10))) return;
+                                        if ([1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 15, 16].contains(_tutorialStep)) return;
                                       }
                                       if (grid[row][col] == 0) {
                                         setState(() {
@@ -801,7 +795,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                           isWin = false;
                                           _showOverlay = false;
                                           history.clear();
-                                          _checkTutorialStep0();
+                                          _checkTutorialDrawPhase();
                                           if (_tutorialStep == -1 && !_hasShownResetText) {
                                             _hasShownResetText = true;
                                             _showResetText = true;
@@ -825,26 +819,27 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                       int row = index ~/ size;
                                       int col = index % size;
                                       bool alive = grid[row][col] == 1;
-                                      bool isTutorialTarget = _tutorialStep == 0 && !alive && (
-                                        (row == 8 && col == 9) ||
-                                        (row == 8 && col == 10) ||
-                                        (row == 9 && col == 8) ||
-                                        (row == 9 && col == 9) ||
-                                        (row == 10 && col == 9)
-                                      );
+                                      
+                                      bool isTutorialTarget = false;
+                                      if (_tutorialStep == 0) isTutorialTarget = ((row == 8 && col == 9) || (row == 8 && col == 10) || (row == 9 && col == 8) || (row == 9 && col == 9) || (row == 10 && col == 9));
+                                      else if (_tutorialStep == 5) isTutorialTarget = (row == 9 && col == 9);
+                                      else if (_tutorialStep == 8) isTutorialTarget = ((row >= 9 && row <= 10) && (col >= 9 && col <= 10));
+                                      else if (_tutorialStep == 11) isTutorialTarget = ((row == 8 && col == 9) || (row == 9 && col >= 8 && col <= 10) || (row == 10 && col == 9));
+                                      else if (_tutorialStep == 14) isTutorialTarget = ((row == 9 && col == 9) || (row == 10 && col == 9) || (row == 10 && col == 10));
+                                      isTutorialTarget = isTutorialTarget && !alive;
 
                                       return GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: () {
                                           if (timer != null && timer!.isActive) return;
                                           if (gameEndTitle != null) return;
-                                          if (_tutorialStep == 0) {
-                                            bool validTarget = (row == 8 && col == 9) ||
-                                              (row == 8 && col == 10) ||
-                                              (row == 9 && col == 8) ||
-                                              (row == 9 && col == 9) ||
-                                              (row == 10 && col == 9);
-                                            if (!validTarget) return;
+                                          if (_tutorialStep != -1 && _tutorialStep != 17) {
+                                            if (_tutorialStep == 0 && !((row == 8 && col == 9) || (row == 8 && col == 10) || (row == 9 && col == 8) || (row == 9 && col == 9) || (row == 10 && col == 9))) return;
+                                            if (_tutorialStep == 5 && (row != 9 || col != 9)) return;
+                                            if (_tutorialStep == 8 && !(row >= 9 && row <= 10 && col >= 9 && col <= 10)) return;
+                                            if (_tutorialStep == 11 && !((row == 8 && col == 9) || (row == 9 && col >= 8 && col <= 10) || (row == 10 && col == 9))) return;
+                                            if (_tutorialStep == 14 && !((row == 9 && col == 9) || (row == 10 && col == 9) || (row == 10 && col == 10))) return;
+                                            if ([1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 15, 16].contains(_tutorialStep)) return;
                                           }
                                           setState(() {
                                             grid[row][col] = 1 - grid[row][col];
@@ -853,7 +848,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                             isWin = false;
                                             _showOverlay = false;
                                             history.clear();
-                                            _checkTutorialStep0();
+                                            _checkTutorialDrawPhase();
                                             if (_tutorialStep == -1 && !_hasShownResetText) {
                                               _hasShownResetText = true;
                                               _showResetText = true;
@@ -1059,32 +1054,37 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                         child: actionButton(
                           gameEndTitle != null ? "Play Again" : "Play",
                           gameEndTitle != null ? Icons.replay : Icons.play_arrow,
-                          gameEndTitle != null ? tryAgain : ((timer != null && timer!.isActive) ? null : start),
+                          gameEndTitle != null 
+                              ? tryAgain 
+                              : ((timer != null && timer!.isActive) || 
+                                 (_tutorialStep != -1 && !([1, 6, 9, 12, 15, 17].contains(_tutorialStep))) 
+                                  ? null 
+                                  : start),
                           isPrimary: true,
-                          isTutorialGlow: _tutorialStep == 1 || _tutorialStep == 4,
+                          isTutorialGlow: [1, 4, 6, 7, 9, 10, 12, 13, 15, 16, 17].contains(_tutorialStep),
                           key: widget.playBtnKey,
                         ),
                       ),
                       const SizedBox(width: 12),
                       GestureDetector(
                         onTap: () {
-                          if (!isRunning) return;
+                          if (!isRunning || (_tutorialStep != -1 && _tutorialStep != 2)) return;
                           setState(() {
                             _isSpeedToggled = !_isSpeedToggled;
-                            if (_tutorialStep == 2) _advanceToStep3();
+                            if (_tutorialStep == 2) _tutorialStep = 3;
                           });
                           _updateSpeed();
                         },
                         onLongPressStart: (_) {
-                          if (!isRunning) return;
+                          if (!isRunning || (_tutorialStep != -1 && _tutorialStep != 2)) return;
                           setState(() {
                             _isSpeedHeld = true;
-                            if (_tutorialStep == 2) _advanceToStep3();
+                            if (_tutorialStep == 2) _tutorialStep = 3;
                           });
                           _updateSpeed();
                         },
                         onLongPressEnd: (_) {
-                          if (!isRunning) return;
+                          if (!isRunning && _tutorialStep != -1) return;
                           setState(() => _isSpeedHeld = false);
                           _updateSpeed();
                         },
@@ -1097,7 +1097,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                             color: !isRunning ? card.withOpacity(0.5) : ((_isSpeedToggled || _isSpeedHeld) ? green : card),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: isRunning && (_isSpeedToggled || _isSpeedHeld) ? green : Colors.white.withOpacity(0.1)),
-                          boxShadow: _tutorialStep == 2 ? [BoxShadow(color: green.withOpacity(0.8), blurRadius: 25, spreadRadius: 6)] : [],
+                            boxShadow: _tutorialStep == 2 ? [BoxShadow(color: green.withOpacity(0.8), blurRadius: 25, spreadRadius: 6)] : [],
                           ),
                           child: Center(
                             child: Icon(
@@ -1139,44 +1139,94 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
 
     switch (_tutorialStep) {
       case 0:
-        title = "1. Draw Life";
-        desc = "Tap the 5 blinking cells to draw an 'R-pentomino'. It starts small but grows massively!";
-        final targets = [
-          [8, 9], [8, 10], [9, 8], [9, 9], [10, 9]
-        ];
-        bool targetsHit = true;
-        for (var t in targets) {
-          if (grid[t[0]][t[1]] != 1) targetsHit = false;
-        }
-        if (!targetsHit && aliveCount > 0) {
-          desc = "Tap ONLY the 5 blinking cells. Tap a cell again to remove it if you made a mistake!";
-        }
-        isTop = false; // Moved to the bottom to not block cells
+        title = "Aim of the Game";
+        desc = "Make your cells survive and grow!\nTap the 5 blinking cells to draw an 'R-pentomino'.";
+        isTop = false;
         break;
       case 1:
-        title = "2. Evolve";
-        desc = "Great! Now press the glowing 'Play' button below to watch your cells evolve.";
+        title = "1. Evolve";
+        desc = "Press the glowing Play button below to bring your cells to life!";
         isTop = true;
         break;
       case 2:
-        title = "3. Speed Control";
-        desc = "Simulation running too slow? Tap the glowing lightning button to toggle 2x speed, or hold it down for a boost!";
+        title = "2. Speed Control";
+        desc = "Simulation running too slow? Tap the glowing lightning button below to toggle 2x speed!";
         isTop = true;
         break;
       case 3:
-        title = "4. Earn Your Badge!";
-        desc = "Watch the Growth stat above! 🚀\n\n🔴 SURVIVING (<1.0x): You lived, but shrunk.\n🟢 GREAT (1.0x-1.9x): Steady growth.\n🟠 EXCELLENT (2.0x+): Massive explosion! 🔥";
-        isTop = false; // Status area is at top, put dialog at bottom
+        title = "3. Earn Your Badge!";
+        desc = "Watch the Growth stat above!\n🔴 DIED / SURVIVING (<1.0x)\n🟢 GREAT (1.0x-1.9x)\n🟠 EXCELLENT (2.0x+)\nKeep them alive to set a High Score! (Wait for run to end)";
+        isTop = false;
         break;
       case 4:
-        title = "5. Clear & Reset";
-        desc = "Awesome run! Tap 'Play Again' below to clear the grid for your next masterpiece.";
+        title = "4. Clear & Reset";
+        desc = "Awesome run! Tap 'Play Again' below to clear the grid and learn the exact rules of Life.";
         isTop = true;
         break;
       case 5:
-        title = "6. Play God";
-        desc = "Ready for the real magic? Tap the glowing tune icon at the top right to change the laws of physics and discover entirely new lifeforms! 🧬🔬";
+        title = "Rule 1: Isolation";
+        desc = "Draw a single isolated cell. Tap the blinking square in the center.";
         isTop = false;
+        break;
+      case 6:
+        title = "Rule 1: Isolation";
+        desc = "Press the glowing Play button! A cell with fewer than 2 neighbors dies of loneliness.";
+        isTop = true;
+        break;
+      case 7:
+        title = "Rule 1: Isolation";
+        desc = "It died! Tap 'Play Again' below to clear the grid for the next rule.";
+        isTop = true;
+        break;
+      case 8:
+        title = "Rule 2: Balance";
+        desc = "Draw a 2x2 square by tapping the 4 blinking cells. Cells with 2 or 3 neighbors stay alive.";
+        isTop = false;
+        break;
+      case 9:
+        title = "Rule 2: Balance";
+        desc = "Press Play! Watch it stabilize and survive perfectly.";
+        isTop = true;
+        break;
+      case 10:
+        title = "Rule 2: Balance";
+        desc = "It survived! A stable shape is called a 'Still Life'. Tap 'Play Again'.";
+        isTop = true;
+        break;
+      case 11:
+        title = "Rule 3: Crowding";
+        desc = "Draw a plus (+) shape using the 5 blinking cells.";
+        isTop = false;
+        break;
+      case 12:
+        title = "Rule 3: Crowding";
+        desc = "Press Play! The center cell has 4 neighbors, which is too crowded.";
+        isTop = true;
+        break;
+      case 13:
+        title = "Rule 3: Crowding";
+        desc = "It died of overpopulation! Tap 'Play Again'.";
+        isTop = true;
+        break;
+      case 14:
+        title = "Rule 4: Reproduction";
+        desc = "Draw an 'L' shape (3 cells). Exactly 3 neighbors bring an empty space to life!";
+        isTop = false;
+        break;
+      case 15:
+        title = "Rule 4: Reproduction";
+        desc = "Press Play to watch the 4th cell spawn to complete the square!";
+        isTop = true;
+        break;
+      case 16:
+        title = "Rule 4: Reproduction";
+        desc = "A new cell was born! Tap 'Play Again'.";
+        isTop = true;
+        break;
+      case 17:
+        title = "You're Ready!";
+        desc = "Find stable patterns or loops to win! But if all cells die, you lose.\n\nDraw any pattern you want and press Play to begin.";
+        isTop = true;
         break;
     }
 

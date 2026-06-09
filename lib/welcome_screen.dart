@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'theme.dart';
 import 'home_screen.dart';
-import 'story_tutorial_screen.dart';
 import 'privacy_policy_dialog.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -193,7 +192,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 context,
                                 PageRouteBuilder(
                                   transitionDuration: const Duration(milliseconds: 800),
-                                  pageBuilder: (_, __, ___) => _isFirstTime ? const StoryTutorialScreen() : const HomeScreen(initialTab: 0),
+                                  pageBuilder: (_, __, ___) => const HomeScreen(initialTab: 0),
                                   transitionsBuilder: (_, animation, __, child) {
                                     return FadeTransition(
                                       opacity: animation,
@@ -231,12 +230,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             Future.delayed(const Duration(milliseconds: 1000), () async {
                               final prefs = await SharedPreferences.getInstance();
                               await prefs.setBool('isFirstTime', false);
+                              if (!_isFirstTime) {
+                                await prefs.setBool('playScreenTutorialShown', false);
+                              }
                               if (!mounted) return;
                               Navigator.pushReplacement(
                                 context,
                                 PageRouteBuilder(
                                   transitionDuration: const Duration(milliseconds: 800),
-                                  pageBuilder: (_, __, ___) => const StoryTutorialScreen(),
+                                  pageBuilder: (_, __, ___) => const HomeScreen(initialTab: 0),
                                   transitionsBuilder: (_, animation, __, child) {
                                     return FadeTransition(
                                       opacity: animation,
