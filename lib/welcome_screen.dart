@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'theme.dart';
 import 'home_screen.dart';
 import 'story_tutorial_screen.dart';
+import 'privacy_policy_dialog.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -258,6 +259,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               letterSpacing: 1.5,
                               color: _isFirstTime ? Colors.white30 : green
                             ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () => PrivacyPolicySheet.show(context),
+                        child: const Text(
+                          "Privacy Policy",
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.8,
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),

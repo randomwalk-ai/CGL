@@ -1,4 +1,4 @@
-package com.example.life_lab
+package ai.randomwalk.lifelab
 
 import io.flutter.embedding.android.FlutterActivity
 

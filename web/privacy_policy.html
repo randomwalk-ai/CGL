@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy Policy for Life Lab - Conway's Game of Life Android Game by Random Walk AI.">
+    <title>Privacy Policy - Life Lab | Random Walk AI</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #030303;
+            --card-color: #111111;
+            --card-border: rgba(255, 255, 255, 0.05);
+            --accent-color: #00ff88;
+            --accent-glow: rgba(0, 255, 136, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-dim: #666666;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+        }
+
+        /* Smooth Reset and Scrollbar */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Beautiful Neon Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080808;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Animated Grid Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Glow effects */
+        .glow-orb {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(50px);
+            opacity: 0.5;
+            animation: floatOrb 10s ease-in-out infinite alternate;
+        }
+        
+        .glow-orb-top {
+            top: -100px;
+            right: -100px;
+        }
+
+        .glow-orb-bottom {
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        /* Layout Container */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 80px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 40px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid var(--accent-color);
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            animation: pulseGlow 2.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
+            100% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); }
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            color: var(--accent-color);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-label {
+            color: var(--text-dim);
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Policy Navigation */
+        .policy-nav {
+            background: var(--card-color);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .policy-nav h2 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .policy-nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .policy-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .policy-nav a:hover {
+            color: var(--accent-color);
+            padding-left: 4px;
+        }
+
+        /* Content Sections */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        section {
+            background: var(--card-color);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        section:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+
+        section:hover::before {
+            background: var(--accent-color);
+        }
+
+        h2.section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+        }
+
+        .section-num {
+            color: var(--accent-color);
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        ul.bullets {
+            list-style: none;
+            padding-left: 4px;
+        }
+
+        ul.bullets li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        ul.bullets li::before {
+            content: '🧬';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+        }
+
+        /* Subsections */
+        .subsection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        h3.sub-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #eeeeee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: rgba(0, 255, 136, 0.02);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 16px;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            section {
+                padding: 24px;
+            }
+            .policy-nav ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="glow-orb glow-orb-top"></div>
+    <div class="glow-orb glow-orb-bottom"></div>
+
+    <div class="container">
+        <!-- Top Header -->
+        <header>
+            <div class="logo-container">
+                <span class="logo-icon">🧬</span>
+            </div>
+            <h1 id="top">LIFE LAB</h1>
+            <p style="text-align: center; margin-bottom: 24px; font-weight: 600; letter-spacing: 2px; color: var(--accent-color);">PRIVACY POLICY</p>
+            <div class="meta-info">
+                <div class="meta-item">
+                    <span class="meta-label">Company:</span>
+                    <span class="meta-value">Random Walk AI</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Effective Date:</span>
+                    <span class="meta-value">01-04-2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Approved By:</span>
+                    <span class="meta-value">Random Walk AI Board</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation of Policy -->
+        <nav class="policy-nav" aria-label="Table of Contents">
+            <h2>Policy Sections</h2>
+            <ul>
+                <li><a href="#purpose">1. Purpose</a></li>
+                <li><a href="#scope">2. Scope</a></li>
+                <li><a href="#definitions">3. Definitions</a></li>
+                <li><a href="#policy-statements">4. Policy Statements</a></li>
+                <li><a href="#roles">5. Roles & Responsibilities</a></li>
+                <li><a href="#monitoring">6. Monitoring & Compliance</a></li>
+                <li><a href="#enforcement">7. Enforcement</a></li>
+                <li><a href="#review">8. Review & Maintenance</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- 1. Purpose -->
+            <section id="purpose">
+                <h2 class="section-title">
+                    <span class="section-num">1.</span> Purpose
+                </h2>
+                <p>
+                    The purpose of this Privacy Policy is to communicate Random Walk's commitment to protecting personal information of users, customers, employees, and third parties. It ensures compliance with global privacy laws such as the General Data Protection Regulation (GDPR), California Consumer Privacy Act (CCPA), and other applicable data protection regulations.
+                </p>
+            </section>
+
+            <!-- 2. Scope -->
+            <section id="scope">
+                <h2 class="section-title">
+                    <span class="section-num">2.</span> Scope
+                </h2>
+                <p>This policy applies to:</p>
+                <ul class="bullets">
+                    <li>All data collected, processed, or stored by the <strong>Life Lab</strong> mobile application.</li>
+                    <li>Employees, contractors, and third-party processors handling data on behalf of Random Walk AI.</li>
+                    <li>All systems, applications, and platforms where data resides.</li>
+                </ul>
+            </section>
+
+            <!-- 3. Definitions -->
+            <section id="definitions">
+                <h2 class="section-title">
+                    <span class="section-num">3.</span> Definitions
+                </h2>
+                <ul class="bullets">
+                    <li><strong>Personal Data:</strong> Any information relating to an identified or identifiable individual.</li>
+                    <li><strong>Data Subject:</strong> An individual whose personal data is processed.</li>
+                    <li><strong>Processing:</strong> Any operation performed on personal data (collection, storage, use, transfer, deletion).</li>
+                    <li><strong>Controller / Processor:</strong> Roles defined under GDPR describing data ownership and processing responsibilities.</li>
+                </ul>
+            </section>
+
+            <!-- 4. Policy Statements -->
+            <section id="policy-statements">
+                <h2 class="section-title">
+                    <span class="section-num">4.</span> Policy Statements
+                </h2>
+                <p>
+                    Random Walk AI operates under a philosophy of data minimization. The Life Lab application was engineered to provide a fully offline, privacy-first simulation environment.
+                </p>
+
+                <!-- 4.1 Data Collection -->
+                <div class="subsection" id="collection">
+                    <h3 class="sub-title">4.1 Data Collection</h3>
+                    <p>
+                        The <strong>Life Lab</strong> mobile application processes and stores gameplay data entirely locally. 
+                        <strong>We do not collect, transmit, or store any personal data</strong> (such as names, email addresses, IP addresses, location data, or device identifiers).
+                    </p>
+                    <p>
+                        Non-personal game configurations, tutorial progression, and high scores are stored locally in the application's private storage directory.
+                    </p>
+                </div>
+
+                <!-- 4.2 Data Usage -->
+                <div class="subsection" id="usage">
+                    <h3 class="sub-title">4.2 Data Usage</h3>
+                    <p>
+                        Any information stored locally is used solely to maintain game state, track achievements, and display local high scores. 
+                        Because no personal data is collected or transmitted, Random Walk AI does not use your data for advertising, user tracking, profiling, or analytical reporting.
+                    </p>
+                </div>
+
+                <!-- 4.3 Data Sharing -->
+                <div class="subsection" id="sharing">
+                    <h3 class="sub-title">4.3 Data Sharing</h3>
+                    <p>
+                        No data is shared with third parties, as no personal data is collected. 
+                    </p>
+                    <p>
+                        If you choose to share your simulation statistics or graphics via the in-game "Share" button, the system triggers the standard Android OS share sheet. All image generation and text sharing are executed locally on your device, and the data is shared directly with the applications you select.
+                    </p>
+                </div>
+
+                <!-- 4.4 Data Retention -->
+                <div class="subsection" id="retention">
+                    <h3 class="sub-title">4.4 Data Retention</h3>
+                    <p>
+                        Local game state is retained indefinitely in your device's local storage to preserve your configurations and high scores. You may securely delete this data at any time by uninstalling the application or clearing the application's data via Android System Settings.
+                    </p>
+                </div>
+
+                <!-- 4.5 Data Security -->
+                <div class="subsection" id="security">
+                    <h3 class="sub-title">4.5 Data Security</h3>
+                    <p>
+                        Although the app processes no personal data, we enforce secure defaults inside the application structure. We compile our application configuration in compliance with modern secure-storage standards for Android to prevent local file tampering.
+                    </p>
+                </div>
+
+                <!-- 4.6 Data Subject Rights -->
+                <div class="subsection" id="rights">
+                    <h3 class="sub-title">4.6 Data Subject Rights</h3>
+                    <p>
+                        Under GDPR and CCPA, users have rights regarding their personal data. Because <strong>Life Lab</strong> does not collect or transmit any personal data, Random Walk AI does not hold any information to access, rectify, or delete. 
+                        You can exercise complete control and deletion of all local app files directly through your device settings or by uninstalling the game.
+                    </p>
+                </div>
+
+                <!-- 4.7 Children's Privacy -->
+                <div class="subsection" id="children">
+                    <h3 class="sub-title">4.7 Children's Privacy</h3>
+                    <p>
+                        <strong>Life Lab</strong> does not target children under the age of 13 (or 16 in the European Economic Area) for the collection of personal data, nor do we knowingly collect any such data. The simulation is safe and operates fully locally for all age groups.
+                    </p>
+                </div>
+
+                <!-- 4.8 Breach Notification -->
+                <div class="subsection" id="breach">
+                    <h3 class="sub-title">4.8 Breach Notification</h3>
+                    <p>
+                        In the event of a security audit revealing vulnerabilities, or any incident involving Random Walk AI's broader operational systems, we will inform affected parties in accordance with global regulations. Since Life Lab operates fully locally, there is no central database or cloud storage susceptible to data breaches.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 5. Roles & Responsibilities -->
+            <section id="roles">
+                <h2 class="section-title">
+                    <span class="section-num">5.</span> Roles & Responsibilities
+                </h2>
+                <ul class="bullets">
+                    <li><strong>Data Protection Officer (DPO):</strong> Oversees compliance with privacy laws and addresses user inquiries regarding data policies.</li>
+                    <li><strong>IT & Security Teams:</strong> Maintain secure development and distribution pipelines for mobile packages.</li>
+                    <li><strong>Employees & Support Agents:</strong> Address client queries with proper respect for privacy, ensuring zero collection of unsolicited personal details.</li>
+                </ul>
+            </section>
+
+            <!-- 6. Monitoring & Compliance -->
+            <section id="monitoring">
+                <h2 class="section-title">
+                    <span class="section-num">6.</span> Monitoring & Compliance
+                </h2>
+                <p>
+                    Privacy audits of our code bases and dependency maps are conducted annually. This ensures that no third-party integrations or updates inadvertently introduce telemetry or data logging without explicit customer consent.
+                </p>
+            </section>
+
+            <!-- 7. Enforcement -->
+            <section id="enforcement">
+                <h2 class="section-title">
+                    <span class="section-num">7.</span> Enforcement
+                </h2>
+                <p>
+                    Violations of this privacy policy by Random Walk AI personnel, partners, or contractors will result in disciplinary action up to termination, alongside any appropriate legal or regulatory penalties.
+                </p>
+            </section>
+
+            <!-- 8. Review & Maintenance -->
+            <section id="review">
+                <h2 class="section-title">
+                    <span class="section-num">8.</span> Review & Maintenance
+                </h2>
+                <p>
+                    This Privacy Policy will be reviewed annually and updated to reflect evolving legal, regulatory, and contractual obligations.
+                </p>
+            </section>
+        </main>
+
+        <!-- Footer containing contact details and back-to-top button -->
+        <footer>
+            <a href="#top" class="btn" id="btn-back-to-top">↑ Back to Top</a>
+            <p style="margin-top: 20px;">For questions or inquiries, please contact: <span style="color: var(--accent-color);">support@randomwalk.ai</span></p>
+            <p style="font-size: 0.8rem;">&copy; 2026 Random Walk AI. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

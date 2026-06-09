@@ -65,6 +65,16 @@ class _StoryTutorialScreenState extends State<StoryTutorialScreen> with SingleTi
     }
   }
 
+  void _handlePan(Offset localPosition) {
+    if (!allowTap) return;
+    double cellWidth = 300 / size;
+    int col = (localPosition.dx / cellWidth).floor();
+    int row = (localPosition.dy / cellWidth).floor();
+    if (row >= 0 && row < size && col >= 0 && col < size) {
+      _onCellTap(row * size + col);
+    }
+  }
+
   void _startSequence(int s) {
     if (s == 1) _startNeighborsSequence();
     else if (s == 2) _startDeathSequence();
@@ -133,9 +143,8 @@ class _StoryTutorialScreenState extends State<StoryTutorialScreen> with SingleTi
     setState(() {
       step = 2;
       title = "Rule 1: Isolation";
-      subtitle = "Draw a single isolated cell anywhere.";
-      targets = {}; // Allow any cell
-      for(int i=0; i<100; i++) targets.add(i);
+      subtitle = "Draw a single isolated cell.";
+      targets = {45};
       filled.clear();
       allowTap = true;
     });
@@ -330,15 +339,8 @@ class _StoryTutorialScreenState extends State<StoryTutorialScreen> with SingleTi
                       alignment: Alignment.center,
                       children: [
                         GestureDetector(
-                          onPanUpdate: (details) {
-                            if (!allowTap) return;
-                            double cellWidth = 300 / size;
-                            int col = (details.localPosition.dx / cellWidth).floor();
-                            int row = (details.localPosition.dy / cellWidth).floor();
-                            if (row >= 0 && row < size && col >= 0 && col < size) {
-                              _onCellTap(row * size + col);
-                            }
-                          },
+                          onPanDown: (details) => _handlePan(details.localPosition),
+                          onPanUpdate: (details) => _handlePan(details.localPosition),
                           child: GridView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: size),
@@ -347,16 +349,13 @@ class _StoryTutorialScreenState extends State<StoryTutorialScreen> with SingleTi
                               bool isTarget = targets.contains(index);
                               bool isFilled = filled.contains(index);
                               Color cellColor = overrides[index] ?? (isFilled ? green : (isTarget ? green.withOpacity(0.2) : Colors.white.withOpacity(0.05)));
-                              return GestureDetector(
-                                onTap: () => _onCellTap(index),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.all(1.5),
-                                  decoration: BoxDecoration(
-                                    color: cellColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(color: Colors.white.withOpacity(0.1)),
-                                  ),
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin: const EdgeInsets.all(1.5),
+                                decoration: BoxDecoration(
+                                  color: cellColor,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: Colors.white.withOpacity(0.1)),
                                 ),
                               );
                             },
@@ -389,17 +388,26 @@ class _StoryTutorialScreenState extends State<StoryTutorialScreen> with SingleTi
                       TextButton(onPressed: _onBackPressed, child: const Text("BACK", style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)))
                     else
                       const SizedBox(width: 60),
-                    if (_showNextButton)
-                      ElevatedButton(
-                        onPressed: _onNextPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: green,
-                          foregroundColor: bg,
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    GestureDetector(
+                      onTap: _showNextButton ? _onNextPressed : null,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 800),
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: _showNextButton ? green : Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(step == 6 ? "FINISH" : "NEXT", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 800),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            fontSize: 18,
+                            color: _showNextButton ? bg : Colors.grey.withOpacity(0.5),
+                          ),
+                          child: Text(step == 6 ? "FINISH" : "NEXT ->"),
+                        ),
                       ),
+                    ),
                   ],
                 ),
               ],
