@@ -51,6 +51,15 @@ void main() {
 
       expect(find.text('Play Demo'), findsOneWidget);
       
+      // Tap the 4 glider target cells to enable the button
+      final gridViewFinder = find.byType(GridView);
+      final cellFinders = find.descendant(of: gridViewFinder, matching: find.byType(GestureDetector));
+      await tester.tap(cellFinders.at(34));
+      await tester.tap(cellFinders.at(35));
+      await tester.tap(cellFinders.at(44));
+      await tester.tap(cellFinders.at(46));
+      await tester.pump(const Duration(milliseconds: 200));
+      
       await tester.tap(find.text('Play Demo'));
       await tester.pump(const Duration(milliseconds: 100));
       

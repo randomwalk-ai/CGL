@@ -26,12 +26,12 @@ void main() {
       
       // NEXT button might be off-screen in the ListView
       await tester.dragUntilVisible(
-        find.text('NEXT'),
+        find.text('NEXT ->'),
         find.byType(ListView).first,
         const Offset(0, -200),
       );
       
-      await tester.tap(find.text('NEXT'));
+      await tester.tap(find.text('NEXT ->'));
       await tester.pump(const Duration(seconds: 1));
 
       expect(find.text('Rule 1: Isolation'), findsOneWidget);

@@ -50,6 +50,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
   int _initialCellsCount = 0;
 
   int _highScore = 0;
+  bool _hasShownHand = false;
 
   final GlobalKey _speedBtnKey = GlobalKey();
   final GlobalKey _statusAreaKey = GlobalKey();
@@ -109,6 +110,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _highScore = prefs.getInt('highScore') ?? 0;
+      _hasShownHand = prefs.getBool('hasShownHandAnimation') ?? false;
     });
   }
 
@@ -519,7 +521,15 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
     } else if (_tutorialStep == 8) {
       if (grid[9][9] == 1 && grid[9][10] == 1 && grid[10][9] == 1 && grid[10][10] == 1 && aliveCount == 4) _tutorialStep = 9;
     } else if (_tutorialStep == 11) {
-      if (grid[8][9] == 1 && grid[9][8] == 1 && grid[9][9] == 1 && grid[9][10] == 1 && grid[10][9] == 1 && aliveCount == 5) _tutorialStep = 12;
+      bool is4x4BoxDrawComplete = true;
+      for (int r = 8; r <= 11; r++) {
+        for (int c = 8; c <= 11; c++) {
+          if (grid[r][c] != 1) {
+            is4x4BoxDrawComplete = false;
+          }
+        }
+      }
+      if (is4x4BoxDrawComplete && aliveCount == 16) _tutorialStep = 12;
     } else if (_tutorialStep == 14) {
       if (grid[9][9] == 1 && grid[10][9] == 1 && grid[10][10] == 1 && aliveCount == 3) _tutorialStep = 15;
     }
@@ -762,8 +772,8 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                             height: gridSize,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: (_tutorialStep == 0 || _tutorialStep == 5 || _tutorialStep == 8 || _tutorialStep == 11 || _tutorialStep == 14) ? green : Colors.transparent, width: 2),
-                              boxShadow: (_tutorialStep == 0 || _tutorialStep == 5 || _tutorialStep == 8 || _tutorialStep == 11 || _tutorialStep == 14) ? [BoxShadow(color: green.withOpacity(0.4), blurRadius: 30, spreadRadius: 8)] : [],
+                              border: Border.all(color: Colors.transparent, width: 2),
+                              boxShadow: const [],
                             ),
                             child: Stack(
                               alignment: Alignment.center,
@@ -820,7 +830,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                       if (_tutorialStep == 0) isTutorialTarget = ((row == 8 && col == 9) || (row == 8 && col == 10) || (row == 9 && col == 8) || (row == 9 && col == 9) || (row == 10 && col == 9));
                                       else if (_tutorialStep == 5) isTutorialTarget = (row == 9 && col == 9);
                                       else if (_tutorialStep == 8) isTutorialTarget = ((row >= 9 && row <= 10) && (col >= 9 && col <= 10));
-                                      else if (_tutorialStep == 11) isTutorialTarget = ((row == 8 && col == 9) || (row == 9 && col >= 8 && col <= 10) || (row == 10 && col == 9));
+                                      else if (_tutorialStep == 11) isTutorialTarget = (row >= 8 && row <= 11 && col >= 8 && col <= 11);
                                       else if (_tutorialStep == 14) isTutorialTarget = ((row == 9 && col == 9) || (row == 10 && col == 9) || (row == 10 && col == 10));
                                       isTutorialTarget = isTutorialTarget && !alive;
 
@@ -833,7 +843,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                             if (_tutorialStep == 0 && !((row == 8 && col == 9) || (row == 8 && col == 10) || (row == 9 && col == 8) || (row == 9 && col == 9) || (row == 10 && col == 9))) return;
                                             if (_tutorialStep == 5 && (row != 9 || col != 9)) return;
                                             if (_tutorialStep == 8 && !(row >= 9 && row <= 10 && col >= 9 && col <= 10)) return;
-                                            if (_tutorialStep == 11 && !((row == 8 && col == 9) || (row == 9 && col >= 8 && col <= 10) || (row == 10 && col == 9))) return;
+                                            if (_tutorialStep == 11 && !(row >= 8 && row <= 11 && col >= 8 && col <= 11)) return;
                                             if (_tutorialStep == 14 && !((row == 9 && col == 9) || (row == 10 && col == 9) || (row == 10 && col == 10))) return;
                                             if ([1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 15, 16, 17].contains(_tutorialStep)) return;
                                           }
@@ -845,6 +855,10 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                             _showOverlay = false;
                                             history.clear();
                                             _checkTutorialDrawPhase();
+                                            if (_tutorialStep == -1 && !_hasShownHand) {
+                                              _hasShownHand = true;
+                                              SharedPreferences.getInstance().then((p) => p.setBool('hasShownHandAnimation', true));
+                                            }
                                             if (_tutorialStep == -1 && !_hasShownResetText) {
                                               _hasShownResetText = true;
                                               _showResetText = true;
@@ -865,17 +879,17 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                                     child: Container(
                                                       margin: const EdgeInsets.all(1.5),
                                                       decoration: BoxDecoration(
-                                                        color: green.withOpacity(0.2 + val * 0.6),
+                                                        color: green.withOpacity(0.1 + val * 0.25),
                                                         border: Border.all(
-                                                          color: green.withOpacity(0.5 + val * 0.5),
-                                                          width: 1.5 + val * 1.5,
+                                                          color: green.withOpacity(0.2 + val * 0.3),
+                                                          width: 1.0 + val * 1.0,
                                                         ),
                                                         borderRadius: BorderRadius.circular(4),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: green.withOpacity(0.4 + val * 0.6),
-                                                            blurRadius: 8 + val * 15,
-                                                            spreadRadius: val * 6,
+                                                            color: green.withOpacity(0.1 + val * 0.2),
+                                                            blurRadius: 4 + val * 6,
+                                                            spreadRadius: val * 1,
                                                           )
                                                         ],
                                                       ),
@@ -904,7 +918,7 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
                                     },
                                   ),
                                 ),
-                                if (_tutorialStep == -1 && aliveCount == 0 && !isRunning && gameEndTitle == null)
+                                if (_tutorialStep == -1 && aliveCount == 0 && !isRunning && gameEndTitle == null && !_hasShownHand)
                                   IgnorePointer(
                                     child: AnimatedBuilder(
                                       animation: _pulseController,
@@ -1214,17 +1228,17 @@ class PlayScreenState extends State<PlayScreen> with SingleTickerProviderStateMi
         break;
       case 11:
         title = "Rule 3: Crowding";
-        desc = "Draw a plus (+) shape using the 5 blinking cells.";
+        desc = "Draw a solid 4x4 box using the 16 blinking cells.";
         isTop = false;
         break;
       case 12:
         title = "Rule 3: Crowding";
-        desc = "Press Play! The center cell has 4 neighbors, which is too crowded.";
+        desc = "Press Play! The middle and edge cells have too many neighbors, which is too crowded.";
         isTop = true;
         break;
       case 13:
         title = "Rule 3: Crowding";
-        desc = "It died of overpopulation! Tap 'Play Again'.";
+        desc = "They died of overpopulation, leaving only the 4 corners! Tap 'Play Again'.";
         isTop = true;
         break;
       case 14:

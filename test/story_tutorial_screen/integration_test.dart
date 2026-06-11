@@ -27,7 +27,7 @@ void main() {
       // After tapping, it triggers animations (Wait for _playNeighborsAnimation)
       await tester.pump(const Duration(seconds: 5));
       
-      expect(find.text('NEXT'), findsOneWidget);
+      expect(find.text('NEXT ->'), findsOneWidget);
     });
 
     testWidgets('tapping SKIP triggers navigation', (tester) async {
