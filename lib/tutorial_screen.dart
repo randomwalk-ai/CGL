@@ -377,6 +377,7 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
   late List<List<int>> grid;
   Timer? timer;
   _DemoStep _step = _DemoStep.pressPlay;
+  List<String> history = [];
   late AnimationController _handController;
   bool _hasTapped = false;
 
@@ -391,11 +392,9 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
     timer?.cancel();
     setState(() {
       grid = List.generate(size, (_) => List.filled(size, 0));
-      // Pre-draw a simple pattern to evolve
-      grid[4][4] = 1;
-      grid[4][5] = 1;
-      grid[5][4] = 1;
       _step = _DemoStep.pressPlay;
+      history.clear();
+      _hasTapped = false;
     });
   }
 
@@ -405,6 +404,9 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
     setState(() {
       _step = _DemoStep.watch;
     });
+
+    history.clear();
+    history.add(grid.expand((r) => r).join(''));
 
     timer = Timer.periodic(const Duration(milliseconds: 300), (t) {
       final nextGrid = _nextGeneration();
@@ -423,11 +425,17 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
         grid = nextGrid;
       });
 
-      if (isSame || aliveCount == 0) {
+      String nextStr = nextGrid.expand((r) => r).join('');
+      bool isOscillating = !isSame && history.contains(nextStr);
+
+      if (isSame || aliveCount == 0 || isOscillating) {
         timer?.cancel();
         setState(() {
           _step = _DemoStep.win;
         });
+      } else {
+        history.add(nextStr);
+        if (history.length > 25) history.removeAt(0);
       }
     });
   }
@@ -472,7 +480,7 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
   String get _instructionText {
     switch (_step) {
       case _DemoStep.pressPlay:
-        return "Tap the squares to draw a pattern, then press 'Play Demo'!";
+        return "Tap the 4 highlighted cells to draw a glider, then press 'Play Demo'!";
       case _DemoStep.watch:
         return "Simulation is running... Observe how the cells evolve.";
       case _DemoStep.win:
@@ -525,9 +533,11 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
                     int row = index ~/ size;
                     int col = index % size;
                     bool alive = grid[row][col] == 1;
+                    bool isTarget = (row == 4 && col == 4) || (row == 3 && col == 4) || (row == 3 && col == 5) || (row == 4 && col == 6);
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
+                        if (!isTarget && _step == _DemoStep.pressPlay) return;
                         if (!_hasTapped) {
                           setState(() {
                             _hasTapped = true;
@@ -543,7 +553,7 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
                         duration: const Duration(milliseconds: 250),
                         margin: const EdgeInsets.all(1.5),
                         decoration: BoxDecoration(
-                          color: alive ? green : Colors.white.withOpacity(0.05),
+                          color: alive ? green : (isTarget ? green.withOpacity(0.2) : Colors.white.withOpacity(0.05)),
                           border: Border.all(color: alive ? green : Colors.white.withOpacity(0.1)),
                           borderRadius: BorderRadius.circular(4),
                           boxShadow: alive
@@ -556,9 +566,11 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
                 ),
                 if (!_hasTapped)
                   Positioned(
+                    left: 82.5,
+                    top: 82.5,
                     child: IgnorePointer(
-                      child: SlideTransition(
-                        position: Tween<Offset>(begin: const Offset(0, -0.3), end: const Offset(0, 0.3)).animate(
+                      child: ScaleTransition(
+                        scale: Tween<double>(begin: 1.0, end: 0.8).animate(
                           CurvedAnimation(parent: _handController, curve: Curves.easeInOut),
                         ),
                         child: Icon(Icons.touch_app, size: 60, color: Colors.white.withOpacity(0.8)),
@@ -573,7 +585,7 @@ class _InteractiveDemoSlideState extends State<_InteractiveDemoSlide> with Singl
             height: 48,
             child: _step == _DemoStep.pressPlay
                 ? ElevatedButton.icon(
-                    onPressed: _play,
+                    onPressed: (grid[4][4] == 1 && grid[3][4] == 1 && grid[3][5] == 1 && grid[4][6] == 1) ? _play : null,
                     icon: const Icon(Icons.play_arrow),
                     label: const Text("Play Demo"),
                     style: ElevatedButton.styleFrom(
